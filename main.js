@@ -95,3 +95,47 @@ function downloadBothCVs() {
         document.body.removeChild(linkEn);
     }, 300);
 }
+
+// الاستماع لأي ضغطة في الصفحة كلها
+document.addEventListener('click', async function (e) {
+    // التأكد إن الضغط كان على زرار تنقل (يحمل كلاس page-btn أو جوه page-nav)
+    const link = e.target.closest('.page-btn, .nav-link, nav a');
+
+    if (!link) return;
+
+    const pageUrl = link.getAttribute('href');
+
+    // لو رابط خارجي أو هاش سيبه يشتغل عادي
+    if (!pageUrl || pageUrl.startsWith('#') || pageUrl.startsWith('http')) return;
+
+    // إيقاف الريفريش نهائياً
+    e.preventDefault();
+
+    try {
+        const response = await fetch(pageUrl);
+        if (!response.ok) throw new Error('Network error');
+
+        const htmlText = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, 'text/html');
+
+        const newContent = doc.querySelector('#main-content');
+        const currentContent = document.querySelector('#main-content');
+
+        if (newContent && currentContent) {
+            // تبديل المحتوى فقط بدون ريفريش
+            currentContent.innerHTML = newContent.innerHTML;
+            document.title = doc.title;
+            history.pushState(null, '', pageUrl);
+        } else {
+            window.location.href = pageUrl;
+        }
+    } catch (error) {
+        window.location.href = pageUrl;
+    }
+});
+
+// لدعم زرار الرجوع والتالي في المتصفح
+window.addEventListener('popstate', () => {
+    location.reload();
+});
