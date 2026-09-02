@@ -74,3 +74,24 @@ if (scrollBtn) {
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
 }
+
+function downloadBothCVs() {
+    const arabicCvPath = './ريهام عبدالفتاح عيد عمارة cv.pdf';
+    const englishCvPath = './Reham Abdel Fattah Emara cv.pdf';
+
+    const linkAr = document.createElement('a');
+    linkAr.href = arabicCvPath;
+    linkAr.download = 'Dr_Reham_Amara_CV_AR.pdf';
+    document.body.appendChild(linkAr);
+    linkAr.click();
+    document.body.removeChild(linkAr);
+
+    setTimeout(() => {
+        const linkEn = document.createElement('a');
+        linkEn.href = englishCvPath;
+        linkEn.download = 'Dr_Reham_Amara_CV_EN.pdf';
+        document.body.appendChild(linkEn);
+        linkEn.click();
+        document.body.removeChild(linkEn);
+    }, 300);
+}

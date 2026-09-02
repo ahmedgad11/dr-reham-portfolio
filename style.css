@@ -323,7 +323,7 @@ footer { background: var(--primary-dark); color: #FFF; text-align: center; paddi
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    background-color: #1a2a3a; /* لون موقعك الرئيسي */
+    background-color:  #c5a059; /* لون موقعك الرئيسي */
     color: #ffffff;
     border: none;
     cursor: pointer;
@@ -332,4 +332,43 @@ footer { background: var(--primary-dark); color: #FFF; text-align: center; paddi
     justify-content: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     z-index: 999;
+}
+
+.floating-cv-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: #c5a059;
+    color: #ffffff;
+    padding: 12px 22px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: inherit;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    transition: all 0.3s ease;
+}
+
+.floating-cv-btn:hover {
+    transform: translateY(-3px);
+    background-color: #b08d48;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 600px) {
+    .floating-cv-btn span {
+        display: none;
+    }
+    .floating-cv-btn {
+        padding: 12px;
+        border-radius: 50%;
+        bottom: 20px;
+        right: 20px;
+    }
 }
