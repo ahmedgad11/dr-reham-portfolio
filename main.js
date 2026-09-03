@@ -130,7 +130,7 @@ document.addEventListener('click', async function (e) {
         const currentContent = document.querySelector('#main-content');
 
         if (newContent && currentContent) {
-            // تبديل المحتوى والعنوان
+            // تبديل المحتوى والعنوان بدون تغيير موقع السكرول
             currentContent.innerHTML = newContent.innerHTML;
             document.title = doc.title;
             history.pushState(null, '', pageUrl);
@@ -140,9 +140,6 @@ document.addEventListener('click', async function (e) {
 
             // إعادة تشغيل الأحداث للمحتوى الجديد
             initPageEvents();
-
-            // العودة لأعلى الصفحة بسلاسة
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
             window.location.href = pageUrl;
         }
