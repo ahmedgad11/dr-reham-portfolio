@@ -1,4 +1,48 @@
+// --- 1. تهيئة الأحداث والأنيميشن بدون تكرار الحركة عند التبديل ---
+function initPageEvents() {
+    const animatedElements = document.querySelectorAll('.animate-from-bottom, .content-card');
+
+    // إظهار المحتوى المحقون فوراً وبسلاسة لمنع الأنيميشن المزدوج
+    animatedElements.forEach(el => {
+        el.classList.add('visible');
+    });
+
+    // إعادة تفعيل تكبير الصور / الشهادات (Modal) للمحتوى الجديد
+    document.querySelectorAll('.cert-img-wrapper').forEach(wrapper => {
+        wrapper.removeEventListener('click', handleCertClick);
+        wrapper.addEventListener('click', handleCertClick);
+    });
+}
+
+function handleCertClick() {
+    const modal = document.querySelector('.img-modal');
+    const modalImg = modal ? modal.querySelector('.img-modal-content') : null;
+    const img = this.querySelector('.cert-img');
+    if (modal && modalImg && img) {
+        modalImg.src = img.src;
+        modal.classList.add('active');
+    }
+}
+
+// --- 2. إنشاء الـ Modal وتفعيل التحميل الأول ---
 document.addEventListener('DOMContentLoaded', () => {
+    if (!document.querySelector('.img-modal')) {
+        const modal = document.createElement('div');
+        modal.className = 'img-modal';
+        modal.innerHTML = `
+            <span class="img-modal-close">&times;</span>
+            <img class="img-modal-content" src="" alt="معاينة المكبرة">
+        `;
+        document.body.appendChild(modal);
+
+        const closeBtn = modal.querySelector('.img-modal-close');
+        closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.remove('active');
+        });
+    }
+
+    // إضافة كلاسات الأنيميشن الأولى
     const profileImg = document.querySelector('.profile-img');
     const heroText = document.querySelector('.hero-text');
     const mainContent = document.querySelector('.main-content');
@@ -6,61 +50,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (profileImg) profileImg.classList.add('animate-from-right');
     if (heroText) heroText.classList.add('animate-from-left');
     if (mainContent) mainContent.classList.add('animate-from-bottom');
+
+    updateActiveButton(window.location.pathname);
+    initPageEvents();
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    const animatedElements = document.querySelectorAll('.animate-from-bottom, .content-card');
+// --- 3. دالة تحديث لون الزر النشط (Active Class) ---
+function updateActiveButton(path) {
+    let currentPage = path.split('/').pop() || 'index.html';
+    if (currentPage === '') currentPage = 'index.html';
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, {
-        threshold: 0.1 // يتفعل الأنيميشن بمجرد ظهور 10% من الكارت
+    document.querySelectorAll('.page-btn, .nav-link, nav a').forEach(btn => {
+        btn.classList.remove('active');
+        const btnHref = btn.getAttribute('href');
+
+        if (btnHref === currentPage || (currentPage === 'index.html' && btnHref === 'index.html')) {
+            btn.classList.add('active');
+        }
     });
+}
 
-    animatedElements.forEach(el => {
-        el.classList.add('scroll-reveal');
-        observer.observe(el);
-    });
-});
-
-// Modal Preview for Certificates
-document.addEventListener("DOMContentLoaded", function () {
-    // إنشاء عنصر الـ Modal في الصفحة
-    const modal = document.createElement('div');
-    modal.className = 'img-modal';
-    modal.innerHTML = `
-        <span class="img-modal-close">&times;</span>
-        <img class="img-modal-content" src="" alt="معاينة المكبرة">
-    `;
-    document.body.appendChild(modal);
-
-    const modalImg = modal.querySelector('.img-modal-content');
-    const closeBtn = modal.querySelector('.img-modal-close');
-
-    // تفعيل التكبير عند الضغط على أي صورة شهادة
-    document.querySelectorAll('.cert-img-wrapper').forEach(wrapper => {
-        wrapper.addEventListener('click', function () {
-            const img = this.querySelector('.cert-img');
-            if (img) {
-                modalImg.src = img.src;
-                modal.classList.add('active');
-            }
-        });
-    });
-
-    // إغلاق النافذة عند الضغط على زر الإغلاق أو الخروج
-    closeBtn.addEventListener('click', () => modal.classList.remove('active'));
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.remove('active');
-    });
-});
-
+// --- 4. التحكم في زر العودة لأعلى الصفحة ---
 const scrollBtn = document.getElementById("scrollTopBtn");
-
 if (scrollBtn) {
     window.addEventListener("scroll", () => {
         if (window.scrollY > 300) {
@@ -75,6 +86,7 @@ if (scrollBtn) {
     });
 }
 
+// --- 5. دالة تحميل السير الذاتية ---
 function downloadBothCVs() {
     const arabicCvPath = './ريهام عبدالفتاح عيد عمارة cv.pdf';
     const englishCvPath = './Reham Abdel Fattah Emara cv.pdf';
@@ -96,19 +108,14 @@ function downloadBothCVs() {
     }, 300);
 }
 
-// الاستماع لأي ضغطة في الصفحة كلها
+// --- 6. معالج التبديل بين الصفحات (SPA Navigation) ---
 document.addEventListener('click', async function (e) {
-    // التأكد إن الضغط كان على زرار تنقل (يحمل كلاس page-btn أو جوه page-nav)
     const link = e.target.closest('.page-btn, .nav-link, nav a');
-
     if (!link) return;
 
     const pageUrl = link.getAttribute('href');
-
-    // لو رابط خارجي أو هاش سيبه يشتغل عادي
     if (!pageUrl || pageUrl.startsWith('#') || pageUrl.startsWith('http')) return;
 
-    // إيقاف الريفريش نهائياً
     e.preventDefault();
 
     try {
@@ -123,10 +130,19 @@ document.addEventListener('click', async function (e) {
         const currentContent = document.querySelector('#main-content');
 
         if (newContent && currentContent) {
-            // تبديل المحتوى فقط بدون ريفريش
+            // تبديل المحتوى والعنوان
             currentContent.innerHTML = newContent.innerHTML;
             document.title = doc.title;
             history.pushState(null, '', pageUrl);
+
+            // تحديث اللون
+            updateActiveButton(pageUrl);
+
+            // إعادة تشغيل الأحداث للمحتوى الجديد
+            initPageEvents();
+
+            // العودة لأعلى الصفحة بسلاسة
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
             window.location.href = pageUrl;
         }
@@ -135,7 +151,8 @@ document.addEventListener('click', async function (e) {
     }
 });
 
-// لدعم زرار الرجوع والتالي في المتصفح
+// دعم أزرار الرجوع والتالي في المتصفح
 window.addEventListener('popstate', () => {
+    updateActiveButton(window.location.pathname);
     location.reload();
 });

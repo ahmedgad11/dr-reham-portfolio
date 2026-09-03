@@ -20,15 +20,15 @@ const heroHTML = `
     </div>
 `;
 
-// 3. أزرار التنقل بين الصفحات (Page Navigation)
+// (Page Navigation) أزرار التنقل بين الصفحات
 function getPageNavHTML(activePage) {
     return `
-        <div class="page-nav">
-             <a href="experience.html" class="page-btn ${activePage === 'experience' ? 'active' : ''}"><i class="fa-solid fa-briefcase"></i> الخبرات والمؤهلات</a>
-            <a href="index.html" class="page-btn ${activePage === 'index' ? 'active' : ''}"><i class="fa-solid fa-compass"></i> الدورات و المهارات</a>
-            <a href="honors.html" class="page-btn ${activePage === 'honors' ? 'active' : ''}"><i class="fa-solid fa-award"></i> الشهادات</a>
-            <a href="contact.html" class="page-btn ${activePage === 'contact' ? 'active' : ''}"><i class="fa-solid fa-envelope"></i> التواصل</a>
-            </div>
+    <div class="page-nav">
+        <a href="index.html" class="page-btn ${activePage === 'index' || activePage === 'experience' ? 'active' : ''}"><i class="fa-solid fa-briefcase"></i>الخبرات و المؤهلات </a>
+        <a href="experience.html" class="page-btn ${activePage === 'education' ? 'active' : ''}"><i class="fa-solid fa-compass"></i> الدورات والمهارات</a>
+        <a href="honors.html" class="page-btn ${activePage === 'honors' ? 'active' : ''}"><i class="fa-solid fa-award"></i> التكريمات</a>
+        <a href="contact.html" class="page-btn ${activePage === 'contact' ? 'active' : ''}"><i class="fa-solid fa-envelope"></i> التواصل</a>
+    </div>
     `;
 }
 
